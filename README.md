@@ -1,4 +1,4 @@
-# Environemnt Setup for Build Performance training
+# Environment Setup for Build Performance training
 
 Shirt store with large number of simple products assigned to each configurable.
 
@@ -16,6 +16,6 @@ If you have warden installed and properly configured:
 
 # Switching to another dataset
 
-`make small` will use small database
-`make medium` will use medium database
-`make large` will use large database
+- `make small` will use small database
+- `make medium` will use medium database
+- `make large` will use large database
