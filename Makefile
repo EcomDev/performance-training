@@ -59,13 +59,16 @@ reindex:
 small:
 	@warden db import < db.small.sql
 	@warden env exec php-fpm bin/magento app:config:import
+	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
 medium:
 	@warden db import < db.medium.sql
 	@warden env exec php-fpm bin/magento app:config:import
+	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
 large:
 	@warden db import < db.large.sql
 	@warden env exec php-fpm bin/magento app:config:import
+	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
 setup: warden-up composer-install magento-install development images small
