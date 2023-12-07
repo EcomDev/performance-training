@@ -58,17 +58,20 @@ reindex:
 
 small:
 	@warden db import < db.small.sql
+	@warden env exec php-fpm bin/magento setup:db-schema:upgrade
 	@warden env exec php-fpm bin/magento app:config:import
 	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
 medium:
 	@gunzip -c db.medium.sql.gz | warden db import
+	@warden env exec php-fpm bin/magento setup:db-schema:upgrade
 	@warden env exec php-fpm bin/magento app:config:import
 	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
 large:
 	@gunzip -c db.large.sql.gz | warden db import
+	@warden env exec php-fpm bin/magento setup:db-schema:upgrade
 	@warden env exec php-fpm bin/magento app:config:import
-	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
+	#@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
 setup: warden-up composer-install magento-install development images small
