@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Installs large dataset
+## Usage: large
+## Example: "ddev large"
+## ProjectTypes: magento2
+## ExecRaw: true
+
+ddev import-db --file=db.large.sql.gz
+ddev magento setup:db-schema:upgrade
+ddev magento app:config:import

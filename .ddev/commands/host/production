@@ -1,0 +1,14 @@
+#!/bin/bash
+
+## Description: Set Magento to production mode
+## Usage: production
+## Example: "ddev production"
+## ProjectTypes: magento2
+## ExecRaw: true
+
+ddev composer dump
+ddev magento deploy:mode:set -s production
+ddev magento setup:di:compile
+ddev magento setup:static-content:deploy
+ddev composer dump -o --apcu
+ddev restart

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+## Description: Reindexes Magento
+## Usage: reindex
+## Example: "ddev reindex"
+## ProjectTypes: magento2
+## ExecRaw: true
+
+ddev magento index:reindex inventory cataloginventory_stock catalog_category_product
