@@ -1,0 +1,41 @@
+# default Docker DNS server
+resolver 127.0.0.11;
+
+map $request_uri $static_hint {
+    "~^/static/" "static";
+    "~^/media/" "static";
+    default "";
+}
+
+map "$static_hint:$cookie_TIDEWAYS_SESSION:$http_X_BLACKFIRE_QUERY:${TIDEWAYS_APIKEY}" $profiler_type {
+    "~^:.*::.+$" "tideways";
+    "~^::.+:" "blackfire";
+    default "";
+}
+
+# Select upstream backend to use based on presense of Xdebug cookies and Blackfire headers
+map "$profiler_type:$cookie_XDEBUG_SESSION$cookie_XDEBUG_PROFILE$cookie_XDEBUG_TRACE" $fastcgi_backend {
+    # Nothing for debug and nothing for blackfire means its a pure request
+    "~^blackfire:" ${NGINX_UPSTREAM_BLACKFIRE_HOST}:${NGINX_UPSTREAM_BLACKFIRE_PORT};
+
+    # Use blackfire if the blackfire query is specified AND no debug cookie is set
+    "~^tideways:" php-tideways:9000;
+
+    # In all other cases, a debug cookie will be present; use debug container
+    default ${NGINX_UPSTREAM_DEBUG_HOST}:${NGINX_UPSTREAM_DEBUG_PORT};
+}
+
+
+server {
+    listen 80;
+
+    root ${NGINX_ROOT}${NGINX_PUBLIC};
+    set $MAGE_ROOT ${NGINX_ROOT};
+
+    index index.html index.php;
+    autoindex off;
+    charset UTF-8;
+
+    include /etc/nginx/available.d/${NGINX_TEMPLATE};
+    include /etc/nginx/default.d/*.conf;
+}

@@ -16,11 +16,11 @@
     "preferred-install": "dist",
     "sort-packages": true
   },
-  "version": "2.4.6-p1",
+  "version": "2.4.6-p4",
   "require": {
-    "magento/product-community-edition": "2.4.6-p1",
+    "magento/composer-dependency-version-audit-plugin": "~0.1",
     "magento/composer-root-update-plugin": "~2.0",
-    "magento/composer-dependency-version-audit-plugin": "~0.1"
+    "magento/product-community-edition": "2.4.6-p4"
   },
   "autoload": {
     "exclude-from-classmap": [

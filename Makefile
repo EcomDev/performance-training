@@ -9,6 +9,9 @@ warden-up:
 composer-install:
 	@warden env exec php-fpm composer install --no-dev
 
+update-schema:
+	@warden env exec php-fpm bin/magento setup:db-schema:upgrade
+
 magento-install:
 	@warden env exec php-fpm bin/magento setup:install --backend-frontname=backend \
      	--amqp-host=rabbitmq --amqp-port=5672 --amqp-user=guest --amqp-password=guest \
@@ -56,24 +59,24 @@ msi-stock:
 reindex:
 	@warden env exec php-fpm bin/magento index:reindex inventory cataloginventory_stock catalog_category_product
 
-small:
+fulltext:
+	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
+
+config-import:
+	@warden env exec php-fpm bin/magento app:config:import
+
+small-sql:
 	@warden db import < db.small.sql
-	@warden env exec php-fpm bin/magento setup:db-schema:upgrade
-	@warden env exec php-fpm bin/magento app:config:import
-	@warden env exec php-fpm bin/magento index:reset catalogsearch_fulltext
-	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
-medium:
+medium-sql:
 	@gunzip -c db.medium.sql.gz | warden db import
-	@warden env exec php-fpm bin/magento setup:db-schema:upgrade
-	@warden env exec php-fpm bin/magento app:config:import
-	@warden env exec php-fpm bin/magento index:reset catalogsearch_fulltext
-	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
-large:
+large-sql:
 	@gunzip -c db.large.sql.gz | warden db import
-	@warden env exec php-fpm bin/magento setup:db-schema:upgrade
-	@warden env exec php-fpm bin/magento app:config:import
-	#@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
-setup: warden-up composer-install magento-install development images small
+small: small-sql config-import update-schema fulltext
+medium: medium-sql config-import update-schema fulltext
+large: large-sql config-import update-schema
+
+install: composer-install magento-install development images small
+setup: warden-up install
