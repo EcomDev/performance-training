@@ -1,0 +1,36 @@
+#!/bin/bash
+
+## Description: Run Magento install inside the web container
+## Usage: magento-install
+## Example: "ddev magento-install"
+## ProjectTypes: magento2
+## ExecRaw: true
+
+ddev composer install --no-dev
+
+ddev magento setup:install --backend-frontname=backend \
+    --amqp-host=rabbitmq --amqp-port=5672 --amqp-user=rabbitmq --amqp-password=rabbitmq \
+    --db-host=db --db-name=db --db-user=db --db-password=db \
+    --search-engine=opensearch --opensearch-host=opensearch \
+    --opensearch-port=9200 --opensearch-index-prefix=magento2 --opensearch-enable-auth=0 --opensearch-timeout=15 \
+    --http-cache-hosts=varnish:80 \
+    --session-save=redis --session-save-redis-host=redis --session-save-redis-password=redis --session-save-redis-port=6379 --session-save-redis-db=2 --session-save-redis-max-concurrency=20 \
+    --cache-backend=redis --cache-backend-redis-server=redis --cache-backend-redis-password=redis --cache-backend-redis-db=0 --cache-backend-redis-port=6379 \
+    --page-cache=redis --page-cache-redis-server=redis --page-cache-redis-password=redis --page-cache-redis-db=1 --page-cache-redis-port=6379
+ddev magento config:set --lock-env web/unsecure/base_url "${DDEV_PRIMARY_URL}/"
+ddev magento config:set --lock-env web/secure/base_url "${DDEV_PRIMARY_URL}/"
+ddev magento config:set --lock-env web/secure/offloader_header X-Forwarded-Proto
+ddev magento config:set --lock-env web/secure/use_in_frontend 1
+ddev magento config:set --lock-env web/secure/use_in_adminhtml 1
+ddev magento config:set --lock-env web/seo/use_rewrites 1
+ddev magento config:set --lock-env system/full_page_cache/caching_application 2
+ddev magento config:set --lock-env system/full_page_cache/ttl 604800
+ddev magento config:set --lock-env dev/static/sign 0
+ddev magento cache:disable block_html
+ddev magento cache:flush
+
+ddev development
+
+ddev images
+
+ddev small

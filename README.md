@@ -2,19 +2,35 @@
 
 Shirt store with large number of simple products assigned to each configurable.
 
-# Variations
+## Variations
 
 - Small (~5k SKU)
 - Medium (~ 26k SKU)
 - Large (~ 260k SKU)
 
+## Installation
 
-# Installation
-If you have warden installed and properly configured:
+### DDEV
+
+If you have [DDEV](https://ddev.com/) installed and properly configured:
+
+`ddev start`
+
+### Warden
+
+If you have [Warden](https://warden.dev/) installed and properly configured:
 
 `make`
 
-# Switching to another dataset
+## Switching to another dataset
+
+### DDEV
+
+- `ddev small` will use small database
+- `ddev medium` will use medium database
+- `ddev large` will use large database
+
+### Warden
 
 - `make small` will use small database
 - `make medium` will use medium database

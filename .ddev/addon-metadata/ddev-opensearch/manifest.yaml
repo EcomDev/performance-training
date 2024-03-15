@@ -1,0 +1,9 @@
+name: ddev-opensearch
+repository: netz98/ddev-opensearch
+version: 1.0.4
+install_date: "2024-01-17T13:17:37+01:00"
+project_files:
+    - opensearch
+    - docker-compose.opensearch.yaml
+global_files: []
+removal_actions: []

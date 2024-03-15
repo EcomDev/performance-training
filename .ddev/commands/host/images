@@ -1,0 +1,10 @@
+#!/bin/bash
+
+## Description: Copies product-images
+## Usage: images
+## Example: "ddev images"
+## ProjectTypes: magento2
+## ExecRaw: true
+
+ddev exec mkdir -p pub/media/catalog/product/S/h
+ddev exec cp product-images/Sh*.png pub/media/catalog/product/S/h/
