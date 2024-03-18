@@ -13,4 +13,7 @@ COPY tideways.repo /etc/yum.repos.d/tideways.repo
 RUN rpm --import https://packages.tideways.com/key.gpg &&  \
     yum makecache --disablerepo=* --enablerepo=tideways && \
     yum install tideways-php --nogpgcheck -y
+
+COPY tideways.ini /etc/php.d/99-custom-tideways.ini
+
 USER www-data

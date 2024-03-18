@@ -7,19 +7,24 @@ map $request_uri $static_hint {
     default "";
 }
 
-map "$static_hint:$cookie_TIDEWAYS_SESSION:$http_X_BLACKFIRE_QUERY:${TIDEWAYS_APIKEY}" $profiler_type {
-    "~^:.*::.+$" "tideways";
+map "$static_hint:$cookie_TIDEWAYS_SESSION:$http_X_BLACKFIRE_QUERY:${NGINX_APM}" $profiler_type {
+    "~^:.+::" "tideways";
     "~^::.+:" "blackfire";
+    ":::tideways" "tideways";
+    ":::blackfire" "blackfire";
     default "";
 }
 
 # Select upstream backend to use based on presense of Xdebug cookies and Blackfire headers
 map "$profiler_type:$cookie_XDEBUG_SESSION$cookie_XDEBUG_PROFILE$cookie_XDEBUG_TRACE" $fastcgi_backend {
-    # Nothing for debug and nothing for blackfire means its a pure request
-    "~^blackfire:" ${NGINX_UPSTREAM_BLACKFIRE_HOST}:${NGINX_UPSTREAM_BLACKFIRE_PORT};
+    # Nothing for debug and blackfire profiler type
+    "blackfire:" ${NGINX_UPSTREAM_BLACKFIRE_HOST}:${NGINX_UPSTREAM_BLACKFIRE_PORT};
 
-    # Use blackfire if the blackfire query is specified AND no debug cookie is set
-    "~^tideways:" php-tideways:9000;
+    # Nothing for debug and tideways profiler type
+    "tideways:" ${NGINX_UPSTREAM_TIDEWAYS_HOST}:${NGINX_UPSTREAM_TIDEWAYS_PORT};
+
+    # Nothing for debug and no profiler - means a default php-fpm request
+    ":" ${NGINX_UPSTREAM_HOST}:${NGINX_UPSTREAM_PORT};
 
     # In all other cases, a debug cookie will be present; use debug container
     default ${NGINX_UPSTREAM_DEBUG_HOST}:${NGINX_UPSTREAM_DEBUG_PORT};
@@ -36,6 +41,10 @@ server {
     autoindex off;
     charset UTF-8;
 
+    add_header X-Profiler-Type $profiler_type always;
+    add_header X-Fastcgi-Backend $fastcgi_backend always;
+
     include /etc/nginx/available.d/${NGINX_TEMPLATE};
     include /etc/nginx/default.d/*.conf;
+
 }

@@ -12,9 +12,12 @@ x-extra_hosts: &extra_hosts
 services:
   nginx:
     image: ${WARDEN_IMAGE_REPOSITORY}/nginx:${NGINX_VERSION:-1.16}-training
-    build: ./.warden/docker/nginx
+    build:
+      context: ./.warden/docker/nginx
+      args:
+        - NGINX_VERSION=${NGINX_VERSION:-1.16}
     environment:
-      - TIDEWAYS_APIKEY
+      - NGINX_APM
 
   tideways-daemon:
     build:
