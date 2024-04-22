@@ -74,9 +74,15 @@ medium-sql:
 large-sql:
 	@gunzip -c db.large.sql.gz | warden db import
 
-small: small-sql config-import update-schema fulltext
-medium: medium-sql config-import update-schema fulltext
-large: large-sql config-import update-schema
+xlarge-sql:
+	@gunzip -c db.xlarge.sql.gz | warden db import
+
+small: small-sql config-import update-schema 
+medium: medium-sql config-import update-schema 
+large: large-sql config-import update-schema 
+xlarge: xlarge-sql config-import update-schema 
+
 
 install: composer-install magento-install development images small
 setup: warden-up install
+
