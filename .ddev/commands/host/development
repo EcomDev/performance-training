@@ -1,0 +1,12 @@
+#!/bin/bash
+
+## Description: Set Magento to developer mode
+## Usage: development
+## Example: "ddev development"
+## ProjectTypes: magento2
+## ExecRaw: true
+
+ddev composer dump
+ddev exec rm -rf generated/*
+ddev magento deploy:mode:set -s developer
+ddev restart

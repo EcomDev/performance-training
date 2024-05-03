@@ -1,0 +1,10 @@
+#!/bin/bash
+
+## Description: MSI-Stock
+## Usage: msi-stock
+## Example: "ddev msi-stock"
+## ProjectTypes: magento2
+## ExecRaw: true
+
+echo "insert into inventory_source_item (sku, source_code, quantity, status) select c.sku, 'eu', si.qty, 1 from cataloginventory_stock_item si inner join catalog_product_entity c on c.entity_id = si.product_id where type_id = 'simple' on duplicate key update quantity = VALUES(quantity), status = VALUES(status)" | ddev mysql
+echo "insert into inventory_source_item (sku, source_code, quantity, status) select c.sku, 'us', si.qty, 1 from cataloginventory_stock_item si inner join catalog_product_entity c on c.entity_id = si.product_id where type_id = 'simple' on duplicate key update quantity = VALUES(quantity), status = VALUES(status)" | ddev mysql

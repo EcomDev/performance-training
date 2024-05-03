@@ -1,0 +1,13 @@
+#!/bin/bash
+
+## Description: Installs small dataset
+## Usage: small
+## Example: "ddev small"
+## ProjectTypes: magento2
+## ExecRaw: true
+
+ddev import-db --file=db.small.sql
+ddev magento setup:db-schema:upgrade
+ddev magento app:config:import
+ddev magento index:reset catalogsearch_fulltext
+ddev magento index:reindex catalogsearch_fulltext
