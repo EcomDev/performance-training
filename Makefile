@@ -31,6 +31,10 @@ magento-install:
 	@warden env exec php-fpm bin/magento config:set --lock-env system/full_page_cache/caching_application 2
 	@warden env exec php-fpm bin/magento config:set --lock-env system/full_page_cache/ttl 604800
 	@warden env exec php-fpm bin/magento config:set --lock-env dev/static/sign 0
+	@warden env exec php-fpm bin/magento config:set --lock-env catalog/frontend/grid_per_page_values 36,72,108
+	@warden env exec php-fpm bin/magento config:set --lock-env catalog/frontend/grid_per_page 36
+	@warden env exec php-fpm bin/magento config:set --lock-env catalog/frontend/list_per_page_values 25,50,100
+	@warden env exec php-fpm bin/magento config:set --lock-env catalog/frontend/list_per_page 25
 	@warden env exec php-fpm bin/magento cache:disable block_html
 	@warden env exec php-fpm bin/magento cache:flush
 
@@ -77,12 +81,21 @@ large-sql:
 xlarge-sql:
 	@gunzip -c db.xlarge.sql.gz | warden db import
 
-small: small-sql config-import update-schema 
-medium: medium-sql config-import update-schema 
-large: large-sql config-import update-schema 
-xlarge: xlarge-sql config-import update-schema 
+small: small-sql config-import update-schema
+medium: medium-sql config-import update-schema
+large: large-sql config-import update-schema
+xlarge: xlarge-sql config-import update-schema
 
 
 install: composer-install magento-install development images small
 setup: warden-up install
 
+re-create:
+	@warden db connect -uroot -pmagento -e 'DROP DATABASE magento; CREATE DATABASE magento;'
+	@rm app/etc/env.php
+
+import-data:
+	@warden db import < db.base.sql
+	@warden env exec php-fpm php sync/bin/import.php -u magento -p magento --db-host db magento ./sync/new-data/
+
+import: re-create magento-install import-data msi-stock
