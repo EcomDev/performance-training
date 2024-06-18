@@ -52,6 +52,15 @@ development:
 	@warden env exec php-fpm bin/magento deploy:mode:set -s developer
 	@warden env restart varnish
 
+reset-compile:
+	@warden env exec php-fpm composer dump
+
+compile:
+	@warden env exec php-fpm bin/magento setup:di:compile
+	@warden env exec php-fpm composer dump -o --apcu
+reload-fpm:
+	@warden env exec php-fpm bash -c "kill -USR2 1"
+
 images:
 	@mkdir -p pub/media/catalog/product/S/h
 	@cp product-images/Sh*.png pub/media/catalog/product/S/h/
