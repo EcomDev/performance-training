@@ -67,6 +67,7 @@ fulltext:
 	@warden env exec php-fpm bin/magento index:reindex catalogsearch_fulltext
 
 config-import:
+	@warden redis flushall
 	@warden env exec php-fpm bin/magento app:config:import
 
 small-sql:
@@ -81,18 +82,17 @@ large-sql:
 xlarge-sql:
 	@gunzip -c db.xlarge.sql.gz | warden db import
 
-small: small-sql config-import update-schema
-medium: medium-sql config-import update-schema
-large: large-sql config-import update-schema
+small: small-sql config-import update-schema reindex fulltext
+medium: medium-sql config-import update-schema reindex fulltext
+large: large-sql config-import update-schema reindex fulltext
 xlarge: xlarge-sql config-import update-schema
-
 
 install: composer-install magento-install development images small
 setup: warden-up install
 
 re-create:
 	@warden db connect -uroot -pmagento -e 'DROP DATABASE magento; CREATE DATABASE magento;'
-	@rm app/etc/env.php
+	@rm -f app/etc/env.php
 
 import-data:
 	@warden db import < db.base.sql
