@@ -3,7 +3,7 @@ ARG PHP_VERSION
 FROM docker.io/wardenenv/php-fpm:${PHP_VERSION}-magento2
 LABEL authors="ivan@ecom.dev"
 # IMPORTANT: Find current version at https://tideways.com/profiler/downloads
-ARG TIDEWAYS_VERSION=5.8.4
+ARG TIDEWAYS_VERSION=5.14.0
 ARG TIDEWAYS_CLI_VERSION=1.0.10
 
 ENV TIDEWAYS_APIKEY=""
