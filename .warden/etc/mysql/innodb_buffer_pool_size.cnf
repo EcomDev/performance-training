@@ -1,0 +1,13 @@
+# MariaDB database server configuration file.
+#
+# * InnoDB
+#
+# InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.
+#
+[mysqld]
+innodb_flush_method	= O_DIRECT
+sync_binlog=1000
+max_allowed_packet=32M
+innodb_buffer_pool_size=4G
+optimizer_switch='rowid_filter=off'
+optimizer_use_condition_selectivity = 1

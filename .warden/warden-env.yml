@@ -9,6 +9,9 @@ x-extra_hosts: &extra_hosts
   - ${TRAEFIK_SUBDOMAIN:-app}.${TRAEFIK_DOMAIN}:${TRAEFIK_ADDRESS:-0.0.0.0}
 
 services:
+  db:
+    volumes:
+      - ./.warden/etc/mysql/innodb_buffer_pool_size.cnf:/etc/mysql/conf.d/innodb_buffer_pool_size.cnf
   nginx:
     image: ${WARDEN_IMAGE_REPOSITORY}/nginx:${NGINX_VERSION:-1.16}-training
     build:
